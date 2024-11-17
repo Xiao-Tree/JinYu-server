@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaotree.jinyuserver.mapper.MenuMapper">
+
+    <select id="selectAllBaseMenu" resultType="com.xiaotree.jinyuserver.domain.vo.BaseMenu">
+        select id,`name`,parent_id from xit_menu order by parent_id,id;
+    </select>
+    <select id="selectRoleMenus" resultType="java.lang.Integer">
+        select m.id from xit_role_menu rm left join jinyu.xit_menu m on m.id = rm.menu_id
+        where rm.role_id=#{roleId} order by m.parent_id,m.id;
+    </select>
+</mapper>

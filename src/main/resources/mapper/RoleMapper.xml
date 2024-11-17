@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaotree.jinyuserver.mapper.RoleMapper">
+    <insert id="addRoleIds">
+        insert into xit_user_role (user_id, role_id) values
+        <foreach collection="roleIds" item="roleId" separator=",">
+            (#{userId},#{roleId})
+        </foreach>
+    </insert>
+
+    <delete id="removeRoleIds">
+        delete from xit_user_role where user_id = #{userId} and
+        <foreach collection="roleIds" item="roleId" separator=" or " open="(" close=")">
+            role_id=#{roleId}
+        </foreach>
+    </delete>
+
+    <select id="getRolesByUserId" resultType="com.xiaotree.jinyuserver.domain.vo.BaseRole">
+        select ur.role_id as id, r.name, r.`key`
+        from xit_user_role ur
+                 left join jinyu.xit_role r on r.id = ur.role_id
+        where ur.user_id = #{userId}
+    </select>
+    <select id="selectUserRoleIds" resultType="java.lang.Integer">
+        select role_id from xit_user_role where user_id=#{userID}
+    </select>
+    <select id="selectPermsByRoleId" resultType="java.lang.String">
+        select m.perm from xit_role_menu rm left join jinyu.xit_menu m on rm.menu_id = m.id where rm.role_id=#{roleId};
+    </select>
+    <select id="selectPermsByRoleIds" resultType="java.lang.String">
+        select m.perm
+        from xit_menu m
+        where m.id in (select distinct rm.menu_id from xit_role_menu rm where rm.role_id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>)
+    </select>
+
+    <insert id="addRoleMenus">
+        insert into xit_role_menu (role_id, menu_id) values
+        <foreach collection="menus" item="menu" separator=",">
+            (#{roleId},#{menu})
+        </foreach>
+    </insert>
+
+    <delete id="removeRoleMenus">
+        delete from xit_role_menu where role_id = #{roleId} and menu_id in
+        <foreach collection="menus" item="menu" open="(" separator="," close=")">#{menu}</foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaotree.jinyuserver.mapper.DictMapper">
+    <insert id="insertDictValues">
+        insert into xit_dict_data (type_id, label, `value`, order_num) values
+        <foreach collection="dictDatas" item="data" separator=",">
+            (#{data.typeId},#{data.label},#{data.value},#{data.orderNum})
+        </foreach>
+    </insert>
+    <delete id="deleteDictValues">
+        delete from xit_dict_data where
+        <foreach collection="dictDatas" item="data" separator="or">
+            (type_id = #{data.typeId} and `value` = #{data.value} )
+        </foreach>
+    </delete>
+    <select id="selectSimpleDictData" resultType="com.xiaotree.jinyuserver.domain.vo.DictValue">
+        select d.label, d.value
+        from xit_dict_data d
+        where d.type_id = #{typeId} order by d.order_num
+    </select>
+    <select id="selectDictData" resultType="com.xiaotree.jinyuserver.domain.entity.DictData">
+        select *
+        from xit_dict_data d
+        where d.type_id = #{dictId} order by d.order_num
+    </select>
+</mapper>
